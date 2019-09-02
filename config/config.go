@@ -2,19 +2,30 @@ package config
 
 import "strings"
 import "io/ioutil"
+import "os"
 
 var sectionDelimeter string = ">>>"
 var typeDelimeter    string = "<<<"
 var matchDelimeter   string = "--"
 
-func Read(file string) []*Section {
-	configContent, err := ioutil.ReadFile(file)
+func Read(filePath string) []*Section {
+	workDir, _ := os.Getwd()
+
+	if (isNotAbsoluteFilePath(filePath)) {
+		filePath = workDir + "/" + filePath
+	}
+
+	groupedConfigSections, err := ioutil.ReadFile(filePath)
 
 	if (err != nil) {
 		panic("Could not read file!")
 	}
 
-	return readSections(string(configContent))
+	return readSections(string(groupedConfigSections))
+}
+
+func isNotAbsoluteFilePath(filePath string) bool {
+	return string(filePath[0]) != "/"
 }
 
 func readSections(fileContent string) []*Section {

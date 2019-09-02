@@ -2,18 +2,19 @@ package main
 
 import "./config"
 import "./presets"
-import "./printer"
+import "./print"
 
-var configFile string = "./config"
+var configFile string = "config"
 
 func main() {
 	sections := config.Read(configFile)
 
 	for _, section := range sections {
-		if (section.Preset == "contains") {
-			printer.Message(section, presets.Contains(section))
-		} else if (section.Preset == "equals") {
-			printer.Message(section, presets.Equals(section))
+		switch section.Preset {
+		case "contains":
+			print.Message(section, presets.Contains(section))
+		case "equals":
+			print.Message(section, presets.Equals(section))
 		}
 	}
 }
