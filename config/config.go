@@ -2,30 +2,22 @@ package config
 
 import "strings"
 import "io/ioutil"
-import "os"
+import "path/filepath"
 
 var sectionDelimeter string = ">>>"
 var typeDelimeter    string = "<<<"
 var matchDelimeter   string = "--"
 
-func Read(filePath string) []*Section {
-	workDir, _ := os.Getwd()
+func Read(file string) []*Section {
+	absPath, _ := filepath.Abs(file)
 
-	if (isNotAbsoluteFilePath(filePath)) {
-		filePath = workDir + "/" + filePath
-	}
-
-	groupedConfigSections, err := ioutil.ReadFile(filePath)
+	groupedConfigSections, err := ioutil.ReadFile(absPath)
 
 	if (err != nil) {
 		panic("Could not read file!")
 	}
 
 	return readSections(string(groupedConfigSections))
-}
-
-func isNotAbsoluteFilePath(filePath string) bool {
-	return string(filePath[0]) != "/"
 }
 
 func readSections(fileContent string) []*Section {
@@ -69,7 +61,6 @@ func (b *Section) parseFromString(stringifySection string) (string, string, stri
 	presetAndMatch := strings.SplitN(sorceAndPresetAndMatch[1], "--", 2)
 	preset := strings.Trim(presetAndMatch[0], " ")
 	match  := strings.Trim(presetAndMatch[1], " ")
-
 	return source, preset, match
 }
 

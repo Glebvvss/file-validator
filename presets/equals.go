@@ -2,13 +2,15 @@ package presets
 
 import "../config"
 import "io/ioutil"
+import "path/filepath"
 
 func Equals(section *config.Section) bool {
 	if (section.Preset != "equals") {
 		panic("Invalid preset for this section")
 	}
 
-	sourceFile, err := ioutil.ReadFile(section.Source)
+	absSource, _ := filepath.Abs(section.Source)
+	sourceFile, err := ioutil.ReadFile(absSource)
 
 	if (err != nil) {
 		panic("Cannot read " + section.Source + " file")
